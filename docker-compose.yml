@@ -40,6 +40,10 @@ services:
         source: ./logstash/pipeline
         target: /usr/share/logstash/pipeline
         read_only: true
+      - type: bind
+        source: ./logstashdata
+        target: /var/logstash
+        read_only: true
     ports:
       - "5044:5044"
       - "5000:5000/tcp"
@@ -68,6 +72,19 @@ services:
       - elk
     depends_on:
       - elasticsearch
+
+
+  mariadb:
+    image: mariadb:10
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=1q9o2w8i37eu
+    volumes:
+      - ./mariadb/:/etc/mysql/conf.d/
+      - ./logstashdata:/var/logstash/
+    networks:
+      - elk
 
 networks:
   elk:
